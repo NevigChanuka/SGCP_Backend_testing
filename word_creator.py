@@ -14,6 +14,7 @@ def word_creator():
         counter = vocab_data["word_count"]
 
     features_list = ["උක්තය",
+                     "අනුක්තය",
                      "ආඛ්‍යාතය",
                      "කෘදන්තය/නාම ක්‍රියා",
 
