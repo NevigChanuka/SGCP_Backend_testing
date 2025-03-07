@@ -52,6 +52,7 @@ def word_creator():
             binary_features_list = []
             counter += 1
 
+            print(word)
 
             # Update vocab_data
             vocab_data["word_count"] = counter  # update word count
