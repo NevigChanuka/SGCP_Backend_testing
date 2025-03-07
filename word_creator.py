@@ -66,7 +66,7 @@ def word_creator():
 
             # Update vocab_data
             vocab_data["word_count"] = counter  # update word count
-            vocab_data[counter] = word  # add new words
+            vocab_data[word] = counter # add new words
 
             # Write to file after updating
             with open("vocab.json", "w", encoding="utf-8") as vocab_file:
