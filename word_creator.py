@@ -54,14 +54,6 @@ def word_creator():
 
             print(word)
 
-            # Update vocab_data
-            vocab_data["word_count"] = counter  # update word count
-            vocab_data[counter] = word  # add new words
-
-            # Write to file after updating
-            with open("vocab.json", "w", encoding="utf-8") as vocab_file:
-                json.dump(vocab_data, vocab_file, ensure_ascii=False, indent=4)
-
 
 
             # write features into list and sava
@@ -71,6 +63,15 @@ def word_creator():
 
 
             print(binary_features_list)
+
+            # Update vocab_data
+            vocab_data["word_count"] = counter  # update word count
+            vocab_data[counter] = word  # add new words
+
+            # Write to file after updating
+            with open("vocab.json", "w", encoding="utf-8") as vocab_file:
+                json.dump(vocab_data, vocab_file, ensure_ascii=False, indent=4)
+
             # Add a new key-value pair
             binary_features_data[counter] = binary_features_list
 
