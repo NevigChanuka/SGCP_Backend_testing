@@ -89,7 +89,7 @@ def relation_table_creator(word_raw_num, column_num):
     try:
         # Read from file
         existing_df = pd.read_parquet('relation_table.parquet', engine='pyarrow')
-        updated_df = pd.concat([existing_df, word_relation_data], ignore_index=True)
+        updated_df = pd.concat([existing_df, word_relation_data], ignore_index=True).fillna(-1).astype(int)
         updated_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none',index=False)
         print(updated_df)
 
@@ -145,13 +145,12 @@ def feature_table_creator():
 
         new_data = pd.DataFrame(data)
 
-        row_number = duplicate_checker(existing_df, new_data)
+        raw_number = duplicate_checker(existing_df, new_data)
 
-        if row_number is not None and row_number >= 0:
-            return row_number
+        if raw_number is not None and raw_number >= 0:
+            return raw_number
 
         else:
-            print(row_number)
 
             updated_df = pd.concat([existing_df, new_data], ignore_index=True)
 
@@ -162,9 +161,9 @@ def feature_table_creator():
             print('\nfeature_table\n')
             print(df)
 
-            last_row_index = df.index[-1]
+            raw_number = df.index[-1]
 
-            return last_row_index
+            return raw_number
 
 
 
@@ -193,7 +192,11 @@ def feature_table_creator():
 
         updated_df = pd.concat([saved_df, new_data], ignore_index=True)
 
+        raw_number = updated_df.index[-1]
+
         print(updated_df)
+
+        return raw_number
 
 
 
@@ -247,7 +250,7 @@ def word_creator():
         # tokenized each word
         for word in cleared_sentences:
 
-            print(word + "\n")
+            print("\n" + word + "\n")
             print("1.ක්‍රියාපද\n"
                   "2.නිපාත\n"
                   "3.ක්‍රියා විශේෂණ\n"
@@ -259,17 +262,16 @@ def word_creator():
             if vocab_type == "1":
                 raw_number = vocab_table_creator(word)
                 relation_table_creator(raw_number, 'R0') # R0 = ක්‍රියාපද
-                print(raw_number)
 
             elif vocab_type == "2":
                 raw_number = vocab_table_creator(word)
                 relation_table_creator(raw_number, 'R1') # R1 = නිපාත
 
-            elif vocab_type == "2":
+            elif vocab_type == "3":
                 raw_number = vocab_table_creator(word)
                 relation_table_creator(raw_number, 'R2') # R1 = ක්‍රියා විශේෂණ
 
-            elif vocab_type == "2":
+            elif vocab_type == "4":
                 raw_number = vocab_table_creator(word)
                 relation_table_creator(raw_number, 'R3') # R1 = නාම විශේෂණ
 
@@ -277,7 +279,7 @@ def word_creator():
                 raw_number = vocab_table_creator(word)
                 column_num = feature_table_creator()
                 relation_table_creator(raw_number, f'R{column_num}')
-                print(column_num)
+                #print(column_num)
             else:
                 print("Invalid Input")
                 df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
