@@ -24,6 +24,11 @@ def feature_creator():
         "අනියමාර්ථ නාම",
         "පුද්ගල නාම",
         "ස්ථාන නාම",
+
+        "ක්‍රියාපද",
+        "නිපාත",
+        "ක්‍රියා විශේෂණ",
+        "නාම විශේෂණ",
     ]
 
     # write features into list and sava
@@ -55,10 +60,10 @@ def feature_creator():
         'C12': [binary_feature_rows[12]],  # පුද්ගල නාම
         'C13': [binary_feature_rows[13]],  # ස්ථාන නාම
 
-        'C14': [0],
-        'C15': [0],
-        'C16': [0],
-        'C17': [0]
+        'C14': [binary_feature_rows[14]],  #ක්‍රියාපද
+        'C15': [binary_feature_rows[15]],  #නිපාත
+        'C16': [binary_feature_rows[16]],  #ක්‍රියා විශේෂණ
+        'C17': [binary_feature_rows[17]]   #නාම විශේෂණ
     }
 
     return data
@@ -308,65 +313,5 @@ def new_word_adder():
 
         print("---------------------------------------------------")
 
-# def verb_finder():
-#     with open("text.txt", "r", encoding="utf-8") as text_file:
-#         text = text_file.read()
-#
-#         filter_words = [
-#             r'නවා',
-#             r'යි',
-#             r'මි',
-#             r'මු',
-#             r'ති',
-#             r'වි',
-#             r'හ',
-#             r'න්න'
-#             r'න්නේය',
-#             r'න්නීය',
-#             r'න්නෝය',
-#             r'වාය',
-#             r'වෝය',
-#             r'මින්',
-#             r'ව',
-#             r'වයි',
-#             r'වමි',
-#             r'වති',
-#             r'වහු',
-#             r'වහි'
-#         ]
-#
-#         pattern = '|'.join(filter_words)
-#
-#         sinhala_pattern = r'[\u200d\u0D80-\u0DFF]+'
-#         sentence = re.findall(sinhala_pattern, text)
-#
-#         new_tokenized_sentence = [re.sub(r"\u200d", "", word) for word in sentence]
-#
-#         for word in new_tokenized_sentence:
-#             if re.search(pattern, word):
-#                 print(word)
 
-        #filtered_sentences  = re.findall(filter_words, text)
-
-
-    # data = {
-    #     'C0': [binary_features_list[0]], #ඒක වචන
-    #     'C1': [binary_features_list[1]], #බහු වචන
-    #
-    #     'C2': [binary_features_list[2]], #උක්තය
-    #     'C3': [binary_features_list[3]], #අනුක්තය
-    #
-    #     'C4': [binary_features_list[4]], #ප්‍රථම පුරුෂ
-    #     'C5': [binary_features_list[5]], #උත්තම පුරුෂ
-    #     'C6': [binary_features_list[6]], #මධ්‍යම පුරුෂ
-    #
-    #     'C7': [binary_features_list[7]], #පුරුෂ ලිංග
-    #     'C8': [binary_features_list[8]], #ස්ත්‍රී ලිංග
-    #     'C9': [binary_features_list[9]], #නපුංසක ලිංග
-    #
-    #     'C10': [binary_features_list[10]], #සර්ව නාම
-    #     'C11': [binary_features_list[11]], #අනියමාර්ථ නාම
-    # }
-    #
-    #
 
