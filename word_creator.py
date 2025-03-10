@@ -249,6 +249,7 @@ def word_creator():
         sentences = re.findall(sinhala_pattern, text)
         cleared_sentences = [re.sub(r"\u200d", "", word) for word in sentences]
 
+
         print(cleared_sentences)
 
 
@@ -274,11 +275,11 @@ def word_creator():
 
             elif vocab_type == "3":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R2') # R1 = ක්‍රියා විශේෂණ
+                relation_table_creator(raw_number, 'R2') # R2 = ක්‍රියා විශේෂණ
 
             elif vocab_type == "4":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R3') # R1 = නාම විශේෂණ
+                relation_table_creator(raw_number, 'R3') # R3 = නාම විශේෂණ
 
             elif vocab_type =="5":
                 raw_number = vocab_table_creator(word)
@@ -287,11 +288,24 @@ def word_creator():
                 #print(column_num)
             else:
                 print("Invalid Input")
-                df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
-                last_row_index = df.index[-1]
+
+                print('\nvocab_table\n')
+                vocab_data_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
+                print(vocab_data_df)
+
+                print('\nrelation_table\n')
+                relation_table_df = pd.read_parquet('relation_table.parquet', engine='pyarrow')
+                print(relation_table_df)
+
                 print('\nfeature_table\n')
+                df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
                 print(df)
-                print(last_row_index)
+
+
+
+
+
+
 
 
 def new_word_adder():
