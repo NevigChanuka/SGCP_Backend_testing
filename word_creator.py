@@ -71,19 +71,19 @@ def feature_creator():
 def duplicate_checker(existing_df, new_data):
 
     for index, row in existing_df.iterrows():
-        print(new_data.iloc[0].tolist())
-        print(row.values.tolist())
+        # print(new_data.iloc[0].tolist())
+        # print(row.values.tolist())
 
         if row.values.tolist() == new_data.iloc[0].tolist():
-             print("work")
+             # print("work")
              return index
         else:
-            print("not work")
+            pass# print("not work")
 
 
 
 def relation_table_creator(word_raw_num, column_num):
-    print('\nrelation_table\n')
+    # print('\nrelation_table\n')
     data = {
         column_num: [word_raw_num],
     }
@@ -96,18 +96,18 @@ def relation_table_creator(word_raw_num, column_num):
         existing_df = pd.read_parquet('relation_table.parquet', engine='pyarrow')
         updated_df = pd.concat([existing_df, word_relation_data], ignore_index=True).fillna(-1).astype(int)
         updated_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none',index=False)
-        print(updated_df)
+        # print(updated_df)
 
     except FileNotFoundError:
         word_relation_data.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
-        print(word_relation_data)
+        # print(word_relation_data)
 
 
 
 
 # this table containing all the vocabulary
 def vocab_table_creator(word):
-    print('\nvocab_table\n')
+    # print('\nvocab_table\n')
 
     data = {
         'words': [word],
@@ -121,11 +121,11 @@ def vocab_table_creator(word):
         existing_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
         updated_df = pd.concat([existing_df, new_word], ignore_index=True)
         updated_df.to_parquet('vocab_data.parquet', engine='pyarrow', compression='none')
-        print(updated_df)
+        # print(updated_df)
 
     except FileNotFoundError:
         new_word.to_parquet('vocab_data.parquet', engine='pyarrow', compression='none')
-        print(new_word)
+        # print(new_word)
 
     finally:
         existing_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
@@ -163,8 +163,8 @@ def feature_table_creator():
 
             df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
 
-            print('\nfeature_table\n')
-            print(df)
+            # print('\nfeature_table\n')
+            # print(df)
 
             raw_number = df.index[-1]
 
@@ -199,7 +199,7 @@ def feature_table_creator():
 
         raw_number = updated_df.index[-1]
 
-        print(updated_df)
+        # print(updated_df)
 
         return raw_number
 
