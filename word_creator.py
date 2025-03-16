@@ -4,7 +4,7 @@ from pandas.io.sas.sas_constants import encoding_length
 
 def feature_creator():
 
-    binary_feature_rows = []
+    binary_feature_rows = [[]]
     features_list = [
         "ඒක වචන",
         "බහු වචන",
@@ -36,37 +36,37 @@ def feature_creator():
         get_user_input = input(feature + ": ")
 
         if get_user_input == "1":
-            binary_feature_rows.append(1)
+            binary_feature_rows[0].append(1)
         else:
-            binary_feature_rows.append(0)
+            binary_feature_rows[0].append(0)
 
-    data = {
-        'C0': [binary_feature_rows[0]],  # ඒක වචන
-        'C1': [binary_feature_rows[1]],  # බහු වචන
+    # data = {
+    #     '0': [binary_feature_rows[0]],  # ඒක වචන
+    #     '1': [binary_feature_rows[1]],  # බහු වචන
+    #
+    #     '2': [binary_feature_rows[2]],  # උක්තය
+    #     '3': [binary_feature_rows[3]],  # අනුක්තය
+    #
+    #     '4': [binary_feature_rows[4]],  # ප්‍රථම පුරුෂ
+    #     '5': [binary_feature_rows[5]],  # උත්තම පුරුෂ
+    #     '6': [binary_feature_rows[6]],  # මධ්‍යම පුරුෂ
+    #
+    #     '7': [binary_feature_rows[7]],  # පුරුෂ ලිංග
+    #     '8': [binary_feature_rows[8]],  # ස්ත්‍රී ලිංග
+    #     '9': [binary_feature_rows[9]],  # නපුංසක ලිංග
+    #
+    #     '10': [binary_feature_rows[10]],  # සර්ව නාම
+    #     '11': [binary_feature_rows[11]],  # අනියමාර්ථ නාම
+    #     '12': [binary_feature_rows[12]],  # පුද්ගල නාම
+    #     '13': [binary_feature_rows[13]],  # ස්ථාන නාම
+    #
+    #     '14': [binary_feature_rows[14]],  #ක්‍රියාපද
+    #     '15': [binary_feature_rows[15]],  #නිපාත
+    #     '16': [binary_feature_rows[16]],  #ක්‍රියා විශේෂණ
+    #     '17': [binary_feature_rows[17]]   #නාම විශේෂණ
+    # }
 
-        'C2': [binary_feature_rows[2]],  # උක්තය
-        'C3': [binary_feature_rows[3]],  # අනුක්තය
-
-        'C4': [binary_feature_rows[4]],  # ප්‍රථම පුරුෂ
-        'C5': [binary_feature_rows[5]],  # උත්තම පුරුෂ
-        'C6': [binary_feature_rows[6]],  # මධ්‍යම පුරුෂ
-
-        'C7': [binary_feature_rows[7]],  # පුරුෂ ලිංග
-        'C8': [binary_feature_rows[8]],  # ස්ත්‍රී ලිංග
-        'C9': [binary_feature_rows[9]],  # නපුංසක ලිංග
-
-        'C10': [binary_feature_rows[10]],  # සර්ව නාම
-        'C11': [binary_feature_rows[11]],  # අනියමාර්ථ නාම
-        'C12': [binary_feature_rows[12]],  # පුද්ගල නාම
-        'C13': [binary_feature_rows[13]],  # ස්ථාන නාම
-
-        'C14': [binary_feature_rows[14]],  #ක්‍රියාපද
-        'C15': [binary_feature_rows[15]],  #නිපාත
-        'C16': [binary_feature_rows[16]],  #ක්‍රියා විශේෂණ
-        'C17': [binary_feature_rows[17]]   #නාම විශේෂණ
-    }
-
-    return data
+    return binary_feature_rows
 
 def duplicate_checker(existing_df, new_data):
 
@@ -84,8 +84,10 @@ def duplicate_checker(existing_df, new_data):
 
 def relation_table_creator(word_raw_num, column_num):
     # print('\nrelation_table\n')
+
+
     data = {
-        column_num: [word_raw_num],
+        f'R{column_num}': [word_raw_num],
     }
 
     word_relation_data = pd.DataFrame(data)
@@ -119,13 +121,30 @@ def vocab_table_creator(word):
     try:
         # Read from file
         existing_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
-        updated_df = pd.concat([existing_df, new_word], ignore_index=True)
+        updated_df = pd.concat([existing_df, new_word], ignore_index=True).fillna(0)
         updated_df.to_parquet('vocab_data.parquet', engine='pyarrow', compression='none')
         # print(updated_df)
 
     except FileNotFoundError:
         new_word.to_parquet('vocab_data.parquet', engine='pyarrow', compression='none')
         # print(new_word)
+
+        rows = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        ]
+
+        new_data = pd.DataFrame(rows,
+                                columns=['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11',
+                                         'C12', 'C13',
+                                         'C14',
+                                         'C15', 'C16','C17'])
+
+        new_data.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
+
+        pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
 
     finally:
         existing_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
@@ -145,10 +164,9 @@ def feature_table_creator():
 
         existing_df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
 
-        data = feature_creator()
+        rows = feature_creator()
 
-
-        new_data = pd.DataFrame(data)
+        new_data = pd.DataFrame(rows, columns=existing_df.columns)
 
         raw_number = duplicate_checker(existing_df, new_data)
 
@@ -175,54 +193,42 @@ def feature_table_creator():
 
 
     except FileNotFoundError:
-        rows = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        ]
+        pass
 
-        new_data = pd.DataFrame(rows,
-                                columns=['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11',
-                                         'C12', 'C13',
-                                         'C14',
-                                         'C15', 'C16','C17'])
-        new_data.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
 
-        saved_df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
-
-        data = feature_creator()
-
-        new_data = pd.DataFrame(data)
-
-        updated_df = pd.concat([saved_df, new_data], ignore_index=True)
-
-        raw_number = updated_df.index[-1]
-
-        # print(updated_df)
-
-        return raw_number
+        # data = feature_creator()
+        # print(data)
+        # new_data = pd.DataFrame(data)
+        #
+        # df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
+        # updated_df = pd.concat([df, new_data], ignore_index=True)
+        #
+        # raw_number = updated_df.index[-1]
+        #
+        # # print(updated_df)
+        #
+        # return raw_number
 
 
 
-    # 'C0': ඒක වචන
-    # 'C1': බහු වචන
-    # 'C2': උක්තය
-    # 'C3': අනුක්තය
-    # 'C4': ප්‍රථම පුරුෂ
-    # 'C5': උත්තම පුරුෂ
-    # 'C6': මධ්‍යම පුරුෂ
-    # 'C7': පුරුෂ ලිංග
-    # 'C8': ස්ත්‍රී ලිංග
-    # 'C9': නපුංසක ලිංග
-    # 'C10': සර්ව නාම
-    # 'C11': අනියමාර්ථ නාම
-    # 'C12': පුද්ගල නාම
-    # 'C13': ස්ථාන නාම
-    # 'C14': ක්‍රියාපද
-    # 'C15': නිපාත
-    # 'C16': ක්‍රියා විශේෂණ
-    # 'C17': නාම විශේෂණ
+    # '0': ඒක වචන
+    # '1': බහු වචන
+    # '2': උක්තය
+    # '3': අනුක්තය
+    # '4': ප්‍රථම පුරුෂ
+    # '5': උත්තම පුරුෂ
+    # '6': මධ්‍යම පුරුෂ
+    # '7': පුරුෂ ලිංග
+    # '8': ස්ත්‍රී ලිංග
+    # '9': නපුංසක ලිංග
+    # '10': සර්ව නාම
+    # '11': අනියමාර්ථ නාම
+    # '12': පුද්ගල නාම
+    # '13': ස්ථාන නාම
+    # '14': ක්‍රියාපද
+    # '15': නිපාත
+    # '16': ක්‍රියා විශේෂණ
+    # '17': නාම විශේෂණ
 
 
 
@@ -267,24 +273,24 @@ def word_creator():
 
             if vocab_type == "1":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R0') # R0 = ක්‍රියාපද
+                relation_table_creator(raw_number, 0) # R0 = ක්‍රියාපද
 
             elif vocab_type == "2":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R1') # R1 = නිපාත
+                relation_table_creator(raw_number, 1) # R1 = නිපාත
 
             elif vocab_type == "3":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R2') # R2 = ක්‍රියා විශේෂණ
+                relation_table_creator(raw_number, 2) # R2 = ක්‍රියා විශේෂණ
 
             elif vocab_type == "4":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 'R3') # R3 = නාම විශේෂණ
+                relation_table_creator(raw_number, 3) # R3 = නාම විශේෂණ
 
             elif vocab_type =="5":
                 raw_number = vocab_table_creator(word)
                 column_num = feature_table_creator()
-                relation_table_creator(raw_number, f'R{column_num}')
+                relation_table_creator(raw_number, column_num)
                 #print(column_num)
             else:
                 print("Invalid Input")

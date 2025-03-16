@@ -7,7 +7,7 @@ def letters_to_unicode(letters):
 word =  "ගය"
 
 
-verb_list = []
+print(letters_to_unicode(word))
 
 
 
