@@ -43,7 +43,7 @@ print(letters_to_unicode(word))
 #     except ValueError:
 #         return "Invalid Unicode input!"
 #
-# if __name__ == "__main__":
+# if __name__ ==
 #     user_input = input("Enter Unicode codes (e.g., U+0DC0 U+0DBA U+0DD2): ").replace("U+", "").strip()
 #     result = unicode_to_letters(user_input)
 #     print("Converted Letters:", result)

@@ -40,31 +40,6 @@ def feature_creator():
         else:
             binary_feature_rows[0].append(0)
 
-    # data = {
-    #     '0': [binary_feature_rows[0]],  # ඒක වචන
-    #     '1': [binary_feature_rows[1]],  # බහු වචන
-    #
-    #     '2': [binary_feature_rows[2]],  # උක්තය
-    #     '3': [binary_feature_rows[3]],  # අනුක්තය
-    #
-    #     '4': [binary_feature_rows[4]],  # ප්‍රථම පුරුෂ
-    #     '5': [binary_feature_rows[5]],  # උත්තම පුරුෂ
-    #     '6': [binary_feature_rows[6]],  # මධ්‍යම පුරුෂ
-    #
-    #     '7': [binary_feature_rows[7]],  # පුරුෂ ලිංග
-    #     '8': [binary_feature_rows[8]],  # ස්ත්‍රී ලිංග
-    #     '9': [binary_feature_rows[9]],  # නපුංසක ලිංග
-    #
-    #     '10': [binary_feature_rows[10]],  # සර්ව නාම
-    #     '11': [binary_feature_rows[11]],  # අනියමාර්ථ නාම
-    #     '12': [binary_feature_rows[12]],  # පුද්ගල නාම
-    #     '13': [binary_feature_rows[13]],  # ස්ථාන නාම
-    #
-    #     '14': [binary_feature_rows[14]],  #ක්‍රියාපද
-    #     '15': [binary_feature_rows[15]],  #නිපාත
-    #     '16': [binary_feature_rows[16]],  #ක්‍රියා විශේෂණ
-    #     '17': [binary_feature_rows[17]]   #නාම විශේෂණ
-    # }
 
     return binary_feature_rows
 
