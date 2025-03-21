@@ -24,18 +24,37 @@ def relation_table_creator(word_raw_num, column_num):
 
 
 
-def change_relation_table(row_index,positions,vocab_relation_df,word_token):
+def change_relation_table(row_index, positions, vocab_relation_df, word_token, feature_table_row_index):
 
 
-      # move relation table value
-      #print(vocab_relation_df)
-      vocab_relation_df.iloc[positions[0][0], positions[0][1]] = -1
-      vocab_relation_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
-      #print(vocab_relation_df)
 
-      vocab_relation_df.loc[positions[0][0], f'R{row_index}'] = word_token
-      vocab_relation_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
-      #print(vocab_relation_df)
+      def relation_move():
+            # move relation table value
+            # print(vocab_relation_df)
+            vocab_relation_df.iloc[positions[0][0], positions[0][1]] = -1
+            vocab_relation_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
+            # print(vocab_relation_df)
+
+            vocab_relation_df.loc[positions[0][0], f'R{row_index}'] = word_token
+            vocab_relation_df.fillna(-1, inplace=True)
+            vocab_relation_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
+            # print(vocab_relation_df)
+
+      count = (vocab_relation_df[column_name] >= 0).sum()
+      print(f'positive_count: {count}')
+
+      if count == 1:
+            vocab_feature_df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
+            vocab_feature_df.loc[ feature_table_row_index , 'C0']  = -1
+            vocab_feature_df.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
+
+            relation_move()
+
+      else:
+            relation_move()
+
+
+
 
 
 def duplicate_checker(existing_df, new_data_list):
@@ -53,13 +72,11 @@ def duplicate_checker(existing_df, new_data_list):
 
 
 
-
-
 word = input("word: ")
 
 
 # find word token
-vocab_data_df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
+
 df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
 result = df[df["words"].astype(str) == word].index
 word_token =result.tolist()[0]
@@ -73,12 +90,14 @@ print("relation table(x,y): ",positions)
 # get the column name of the word in vocab relation table
 column_name = vocab_relation_df.columns[positions[0][1]]
 print(column_name)
-feature_table_row_index = int(list(column_name)[1:][0])
-
+number = [item for item in column_name if item.isdigit()]
+feature_table_row_index= int(''.join(number))
+#feature_table_row_index = int(list(column_name)[1:][0])
+print(feature_table_row_index)
 
 # get raw details in vocab feature table
 vocab_feature_table = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
-feature_row = vocab_feature_table.iloc[positions[0][1]]
+feature_row = vocab_feature_table.iloc[feature_table_row_index]
 #print(feature_row)
 
 print(f"ඒක වචන: {feature_row.iloc[0]}\n",
@@ -163,18 +182,23 @@ if row_index is None:
             vocab_feature_table.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
             #print(vocab_feature_table)
       else:
-            #print(binary_feature_rows)
+            print(binary_feature_rows)
             new_data = pd.DataFrame(binary_feature_rows, columns=vocab_feature_table.columns)
             vocab_feature_table = pd.concat([vocab_feature_table, new_data], ignore_index=True)
             vocab_feature_table.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
             #print(vocab_feature_table)
+            vocab_relation_df.iloc[positions[0][0], positions[0][1]] = -1
+            vocab_relation_df.to_parquet('relation_table.parquet', engine='pyarrow', compression='none')
             row_number = vocab_feature_table.index[-1]
+
             #print(row_number)
             relation_table_creator(word_token,row_number)
 
 
 else:
-      change_relation_table(row_index, positions, vocab_relation_df, word_token)
+      print(row_index)
+      print("work")
+      change_relation_table(row_index, positions, vocab_relation_df, word_token, feature_table_row_index)
 
 
 

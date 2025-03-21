@@ -1,6 +1,7 @@
 import re
 import pandas as pd
-from pandas.io.sas.sas_constants import encoding_length
+
+
 
 def feature_creator():
 
@@ -149,19 +150,29 @@ def feature_table_creator():
             return raw_number
 
         else:
+            rows_with_minus_one = existing_df.index[existing_df['C0'] == -1].tolist()
 
-            updated_df = pd.concat([existing_df, new_data], ignore_index=True)
 
-            updated_df.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
 
-            df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
+            if len(rows_with_minus_one) > 0:
 
-            # print('\nfeature_table\n')
-            # print(df)
+                existing_df.iloc[rows_with_minus_one[0]] = rows[0]
+                existing_df.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
+                return rows_with_minus_one[0]
 
-            raw_number = df.index[-1]
 
-            return raw_number
+            else:
+                updated_df = pd.concat([existing_df, new_data], ignore_index=True)
+
+                updated_df.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
+
+                df = pd.read_parquet('vocab_feature.parquet', engine='pyarrow')
+
+                # print('\nfeature_table\n')
+                # print(df)
+
+                raw_number = df.index[-1]
+                return raw_number
 
 
 
@@ -285,7 +296,7 @@ def word_creator():
 
 
 
-
+word_creator()
 
 
 
