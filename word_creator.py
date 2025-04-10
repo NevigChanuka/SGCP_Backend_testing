@@ -26,10 +26,12 @@ def feature_creator():
         "පුද්ගල නාම",
         "ස්ථාන නාම",
 
-        "ක්‍රියාපද",
+        "ක්‍රියාපද-වර්තමාන",
         "නිපාත",
         "ක්‍රියා විශේෂණ",
         "නාම විශේෂණ",
+        "ක්‍රියාපද-අතීත",
+
     ]
 
     # write features into list and sava
@@ -106,17 +108,17 @@ def vocab_table_creator(word):
         # print(new_word)
 
         rows = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         ]
 
         new_data = pd.DataFrame(rows,
                                 columns=['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11',
                                          'C12', 'C13',
                                          'C14',
-                                         'C15', 'C16','C17'])
+                                         'C15', 'C16','C17', 'C18'])
 
         new_data.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
 
@@ -142,8 +144,11 @@ def feature_table_creator():
 
         rows = feature_creator()
 
-        new_data = pd.DataFrame(rows, columns=existing_df.columns)
-
+        new_data = pd.DataFrame(rows, columns=['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11',
+                                         'C12', 'C13',
+                                         'C14',
+                                         'C15', 'C16','C17', 'C18'])
+        # columns=existing_df.columns
         raw_number = duplicate_checker(existing_df, new_data)
 
         if raw_number is not None and raw_number >= 0:
@@ -162,7 +167,7 @@ def feature_table_creator():
 
 
             else:
-                updated_df = pd.concat([existing_df, new_data], ignore_index=True)
+                updated_df = pd.concat([existing_df, new_data], ignore_index=True).fillna(0)
 
                 updated_df.to_parquet('vocab_feature.parquet', engine='pyarrow', compression='none')
 
@@ -211,10 +216,11 @@ def feature_table_creator():
     # '11': අනියමාර්ථ නාම
     # '12': පුද්ගල නාම
     # '13': ස්ථාන නාම
-    # '14': ක්‍රියාපද
+    # '14': ක්‍රියාපද-වර්තමාන
     # '15': නිපාත
     # '16': ක්‍රියා විශේෂණ
     # '17': නාම විශේෂණ
+    # '18': ක්‍රියාපද-අතීත
 
 
 
@@ -249,17 +255,20 @@ def word_creator():
         for word in cleared_sentences:
 
             print("\n" + word + "\n")
-            print("1.ක්‍රියාපද\n"
+            print("1.ක්‍රියාපද-වර්තමාන\n"
                   "2.නිපාත\n"
                   "3.ක්‍රියා විශේෂණ\n"
                   "4.නාම විශේෂණ\n"
-                  "5.නාම පද\n")
+                  "5.නාම පද\n"
+                  "6.ක්‍රියාපද-අතීත\n"
+                  )
+
 
             vocab_type = input(": ")
 
             if vocab_type == "1":
                 raw_number = vocab_table_creator(word)
-                relation_table_creator(raw_number, 0) # R0 = ක්‍රියාපද
+                relation_table_creator(raw_number, 0) # R0 = ක්‍රියාපද-වර්තමාන
 
             elif vocab_type == "2":
                 raw_number = vocab_table_creator(word)
@@ -278,6 +287,11 @@ def word_creator():
                 column_num = feature_table_creator()
                 relation_table_creator(raw_number, column_num)
                 #print(column_num)
+
+            elif vocab_type == "6":
+                raw_number = vocab_table_creator(word)
+                relation_table_creator(raw_number, 23)  # R23 = ක්‍රියාපද-අතීත
+
             else:
                 print("Invalid Input")
 
@@ -300,24 +314,6 @@ word_creator()
 
 
 
-def new_word_adder():
-    while True:
-        word = input("Word: ")
-
-        if word == '0':
-            break
-        else:
-            df = pd.read_parquet('vocab_data.parquet', engine='pyarrow')
-            result = df[df["words"].astype(str).str.contains(word, case=False)]
-            print(result)
-
-        add_word = input("Add: ")
-
-        if add_word == '':
-            with open('text.txt', 'a', encoding="utf-8") as file:
-                file.write(f'  {word}  ')
-
-        print("---------------------------------------------------")
 
 
 
